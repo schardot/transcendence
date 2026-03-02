@@ -50,9 +50,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: user_db
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-    secrets:
-    - postgres_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - user_db_data:/var/lib/postgresql/data
     networks:
@@ -72,11 +70,6 @@ services:
     env_file:
       - ./services/user-service/.env
 
-    secrets:
-    - postgres_password
-    - jwt_secret
-    - cookie_secret
-
     depends_on:
       user-db:
         condition: service_healthy
@@ -86,8 +79,6 @@ services:
       - ./services/user-service/ssl:/app/ssl:ro
 
     environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-      COOKIE_SECRET_FILE: /run/secrets/cookie_secret
       NODE_EXTRA_CA_CERTS: /app/ssl/user-service.crt
       NODE_TLS_REJECT_UNAUTHORIZED: 0
 
@@ -108,10 +99,6 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./services/chat-service/.env
-    environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-    secrets:
-      - jwt_secret
     volumes:
       - ./services/chat-service/ssl:/app/ssl:ro
     networks:
@@ -122,12 +109,8 @@ services:
     build:
       context: ./services/presence-service
       dockerfile: Dockerfile
-    environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
     env_file:
       - ./services/presence-service/.env
-    secrets:
-    - jwt_secret
     volumes:
       - ./services/presence-service/ssl:/app/ssl:ro
     depends_on:
@@ -141,12 +124,8 @@ services:
     build:
       context: ./services/notification-service
       dockerfile: Dockerfile
-    environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
     env_file:
       - ./services/notification-service/.env
-    secrets:
-    - jwt_secret
     volumes:
       - ./services/notification-service/ssl:/app/ssl:ro
     networks:
@@ -158,11 +137,8 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
       NODE_EXTRA_CA_CERTS: /app/ssl/api-gateway.crt
       NODE_TLS_REJECT_UNAUTHORIZED: 0
-    secrets:
-    - jwt_secret
     volumes:
       - ./api-gateway/ssl:/app/ssl:ro
     networks:
@@ -190,11 +166,3 @@ networks:
 volumes:
   user_db_data:
   frontend_dist:
-
-secrets:
-  postgres_password:
-    file: ./secrets/postgres_password
-  jwt_secret:
-    file: ./secrets/jwt_secret
-  cookie_secret:
-    file: ./secrets/cookie_secret
