@@ -8,9 +8,6 @@
 # Keep the directory structure
 !nginx/ssl/.gitkeep
 
-# Secrets (generated locally, never commit)
-secrets/
-
 # Node.js
 node_modules/
 npm-debug.log*
