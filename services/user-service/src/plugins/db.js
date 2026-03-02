@@ -75,15 +75,15 @@ async function dbConnector(app, options) {
 
 function buildDatabaseUrl() {
     const {
-        DB_USER,
+        POSTGRES_USER,
         DB_HOST,
         DB_PORT,
-        DB_NAME,
+        POSTGRES_DB,
     } = process.env;
 
     const databasePassword = resolveDatabasePassword();
     const encodedPassword = encodeURIComponent(databasePassword);
-    return `postgres://${DB_USER}:${encodedPassword}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+    return `postgres://${POSTGRES_USER}:${encodedPassword}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}`;
 }
 
 export default fastifyPlugin(dbConnector)
