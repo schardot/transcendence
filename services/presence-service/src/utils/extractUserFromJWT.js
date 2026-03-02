@@ -2,24 +2,11 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 
 function resolveJwtSecret() {
-  if (process.env.JWT_SECRET) {
-    return process.env.JWT_SECRET;
-  }
-
-  const jwtSecretFile = process.env.JWT_SECRET_FILE;
-  if (jwtSecretFile) {
-    try {
-      return fs.readFileSync(jwtSecretFile, "utf8").trim();
-    } catch (err) {
-      console.error(
-        `Failed to read JWT secret file at ${jwtSecretFile}:`,
-        err
-      );
-      return undefined;
+    const value = process.env.JWT_SECRET;
+    if (!value | value.trim() === '') {
+        throw new Error('Missing required environment variable: JWT_SECRET');
     }
-  }
-
-  return undefined;
+    return value;
 }
 
 const jwtSecret = resolveJwtSecret();
