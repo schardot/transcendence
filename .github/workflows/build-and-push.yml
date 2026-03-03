@@ -68,6 +68,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Recreate frontend SSL certs
+        if: matrix.name == 'frontend'
+        run: |
+          mkdir -p frontend/ssl
+          echo "${{ secrets.FRONTEND_CRT }}" > frontend/ssl/frontend.crt
+          echo "${{ secrets.FRONTEND_KEY }}" > frontend/ssl/frontend.key
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
