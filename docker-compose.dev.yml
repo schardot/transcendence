@@ -14,7 +14,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
-
     networks:
       - transcendence-network
     healthcheck:
@@ -86,7 +85,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: user_db
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - user_db_data:/var/lib/postgresql/data
     networks:
@@ -108,13 +107,8 @@ services:
     env_file:
       - ./services/user-service/.env
     environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-      COOKIE_SECRET_FILE: /run/secrets/cookie_secret
       NODE_EXTRA_CA_CERTS: /app/ssl/server.crt
       NODE_TLS_REJECT_UNAUTHORIZED: 0
-    secrets:
-      - jwt_secret
-      - cookie_secret
     volumes:
       - ./services/user-service/uploads:/app/uploads
       - ./services/user-service/ssl:/app/ssl:ro
@@ -136,10 +130,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-    secrets:
-      - jwt_secret
     volumes:
       - ./services/chat-service:/app
       - /app/node_modules
@@ -155,10 +145,6 @@ services:
     build:
       context: ./services/presence-service
       dockerfile: Dockerfile.dev
-    environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-    secrets:
-      - jwt_secret
     volumes:
       - ./services/presence-service/ssl:/app/ssl:ro
     depends_on:
@@ -177,10 +163,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-    secrets:
-      - jwt_secret
     volumes:
       - ./services/notification-service:/app
       - /app/node_modules
@@ -197,10 +179,9 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile.dev
     environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
       NODE_EXTRA_CA_CERTS: /app/ssl/api-gateway.crt
-    secrets:
-      - jwt_secret
+    env_file:
+      - ./api-gateway/.env
     volumes:
       - ./api-gateway/ssl:/app/ssl:ro
     ports:
@@ -233,8 +214,3 @@ volumes:
   frontend_dist:
   user_db_data:
 
-secrets:
-  jwt_secret:
-    file: ./secrets/jwt_secret
-  cookie_secret:
-    file: ./secrets/cookie_secret

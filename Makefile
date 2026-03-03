@@ -4,7 +4,6 @@
 ## === Bootstrap ===
 
 setup:
-	@bash ./scripts/generate-secrets.sh
 	@bash ./scripts/generate-ssl-certs.sh
 
 

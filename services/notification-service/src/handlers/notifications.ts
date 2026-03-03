@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import jwt from "jsonwebtoken";
-import fs from "fs";
+import process from "process";
 
 export interface User {
   id: string;
@@ -12,25 +12,14 @@ const clients: Map<WebSocket, User> = new Map();
 
 export const socketsByUserId: Map<string, Set<WebSocket>> = new Map();
 
-function resolveJwtSecret(): string | undefined {
-  if (process.env.JWT_SECRET) {
-    return process.env.JWT_SECRET;
-  }
+function resolveJwtSecret(): string {
+    const value = process.env.JWT_SECRET;
 
-  const jwtSecretFile = process.env.JWT_SECRET_FILE;
-  if (jwtSecretFile) {
-    try {
-      return fs.readFileSync(jwtSecretFile, "utf8").trim();
-    } catch (err) {
-      console.error(
-        `Failed to read JWT secret file at ${jwtSecretFile}:`,
-        err
-      );
-      return undefined;
+    if (!value || value.trim() === "") {
+        throw new Error("Missing required environment variable: JWT_SECRET");
     }
-  }
 
-  return undefined;
+    return value;
 }
 
 const jwtSecret = resolveJwtSecret();

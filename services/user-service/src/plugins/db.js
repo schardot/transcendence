@@ -5,6 +5,14 @@ import path from 'path'
 import pg from 'pg'
 import fs from 'fs';
 
+function resolveDatabasePassword() {
+    const value = process.env.POSTGRES_PASSWORD;
+    if (!value || value.trim() === '') {
+        throw new Error('Missing required environment variable: POSTGRES_PASSWORD');
+    }
+    return value;
+}
+
 async function waitForDatabase(connectionString, maxRetries = 10, delay = 2000) {
     for (let i = 0; i < maxRetries; i++) {
         const client = new pg.Client({ connectionString })
@@ -67,20 +75,15 @@ async function dbConnector(app, options) {
 
 function buildDatabaseUrl() {
     const {
-        DB_USER,
+        POSTGRES_USER,
         DB_HOST,
         DB_PORT,
-        DB_NAME,
-        DB_PASSWORD_FILE,
+        POSTGRES_DB,
     } = process.env;
 
-    if (!DB_PASSWORD_FILE) {
-        throw new Error('DB_PASSWORD_FILE is not set');
-    }
-
-    const password = fs.readFileSync(DB_PASSWORD_FILE, 'utf8').trim();
-    const encodedPassword = encodeURIComponent(password);
-    return `postgres://${DB_USER}:${encodedPassword}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+    const databasePassword = resolveDatabasePassword();
+    const encodedPassword = encodeURIComponent(databasePassword);
+    return `postgres://${POSTGRES_USER}:${encodedPassword}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}`;
 }
 
 export default fastifyPlugin(dbConnector)

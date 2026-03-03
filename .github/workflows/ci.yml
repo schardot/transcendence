@@ -2,9 +2,9 @@ name: Build Pong App
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
   pull_request:
-    branches: [develop]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -16,8 +16,6 @@ jobs:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
 
     steps:
     - uses: actions/checkout@v6
@@ -31,13 +29,6 @@ jobs:
           cp services/chat-service/.env.example services/chat-service/.env
           cp services/notification-service/.env.example services/notification-service/.env
           cp services/presence-service/.env.example services/presence-service/.env
-
-        # Create secrets directory and files
-        mkdir -p secrets
-        echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/postgres_password
-        echo "${{ secrets.JWT_SECRET }}" > secrets/jwt_secret
-        echo "${{ secrets.COOKIE_SECRET }}" > secrets/cookie_secret
-        chmod 600 secrets/postgres_password secrets/jwt_secret secrets/cookie_secret
 
     - name: Generate SSL certificates
       run: |

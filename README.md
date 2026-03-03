@@ -98,7 +98,6 @@ transcendence/
 ├── nginx/                    # Nginx reverse proxy configuration
 ├── scripts/                  # Setup and utility scripts
 ├── init-scripts/             # Database initialization scripts
-├── secrets/                  # Generated secrets (not in git)
 ├── docker-compose.yml        # Production Docker configuration
 ├── docker-compose.dev.yml    # Development Docker overrides
 └── Makefile                  # Build and deployment commands
@@ -136,16 +135,13 @@ cd transcendence
 
 #### 2. Environment Setup
 
-Run the setup command to generate all required secrets and SSL certificates:
+Run the setup command to generate all required SSL certificates:
 
 ```bash
 make setup
 ```
 
 This command automatically:
-- Generates `secrets/jwt_secret` (JWT signing key)
-- Generates `secrets/postgres_password` (database password)
-- Generates `secrets/cookie_secret` (session cookie secret)
 - Creates SSL certificates for HTTPS (nginx, api-gateway, and all services)
 
 **Environment files**: When running `make up` or `make dev`, environment files are automatically synced from `.env.example` templates. You can also run `make env` manually to sync them, or `make env-check` to verify they match.
@@ -155,10 +151,8 @@ This command automatically:
 ```bash
 # Database Configuration
 POSTGRES_USER=myuser
-POSTGRES_DB=transcendence_db
+POSTGRES_DB=user_db
 ```
-
-> ⚠️ **Security Note**: The `secrets/` directory contains sensitive data. Never commit it to version control.
 
 #### 3. Start the Application
 
@@ -209,7 +203,7 @@ Once services are running:
 
 | Command | Description |
 |---------|-------------|
-| `make setup` | Generate secrets and SSL certificates |
+| `make setup` | Generate SSL certificates |
 | `make up` | Start all services in production mode |
 | `make dev` | Start with development overrides (hot reload) |
 | `make down` | Stop all services |
@@ -807,7 +801,6 @@ redis.on('message', (channel, message) => {
 
 #### Key Achievements
 - Architected the microservices structure and inter-service communication
-- Implemented secure secret management with Docker secrets
 - Set up the complete development and production Docker environments
 
 #### Challenges Overcome
