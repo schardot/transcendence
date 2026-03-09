@@ -93,7 +93,7 @@ const Home: FC = () => {
 			)}
 			{showRest && (
 				<section className='animate-fade-in flex flex-col items-center justify-center gap-6'>
-					<p className='font-retro text-accent-pink text-xl md:text-2xl mb-8'>Choose your game mode</p>
+					<p className='font-retro text-accent-pink text-xl md:text-2xl mb-8 text-center text-balance'>Choose your game mode</p>
 					<div className='grid grid-cols-1 place-items-center gap-6 overflow-auto text-center text-xl sm:grid-cols-1 lg:grid-cols-3 lg:gap-20'>
 						<PinkButton
 							className='lg:max-w-72 xl:max-w-96'
